@@ -1,6 +1,15 @@
 "use client";
 
+import { cleanSongTitle } from "@/lib/cleanTitle";
+
 export default function Home() {
+
+  console.log(cleanSongTitle("Arijit Singh - Tum Hi Ho | Official Video"));
+
+console.log(cleanSongTitle("Tum Hi Ho (Lofi) - Arijit Singh"));
+
+console.log(cleanSongTitle("Tum Hi Ho | Lyrics | Aashiqui 2"));
+
   return (
     <div className="bg-nord-bg text-nord-text font-display overflow-x-hidden min-h-screen flex flex-col">
       {/* Navbar */}
