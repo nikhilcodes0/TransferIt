@@ -97,7 +97,11 @@ console.log(cleanSongTitle("Tum Hi Ho | Lyrics | Aashiqui 2"));
               </div>
 
               {/* Action Button */}
-              <button className="group relative w-full flex items-center justify-center gap-3 bg-primary hover:bg-primary-hover text-nord-bg font-bold text-lg py-4 px-6 rounded-xl transition-all duration-200 shadow-glow hover:translate-y-[-1px] active:translate-y-[1px]">
+              <button className="group relative w-full flex items-center justify-center gap-3 bg-primary hover:bg-primary-hover text-nord-bg font-bold text-lg py-4 px-6 rounded-xl transition-all duration-200 shadow-glow hover:translate-y-[-1px] active:translate-y-[1px]"
+              onClick={() => {
+                window.location.href = "/api/auth/spotify";
+              }}
+              >
                 <span className="material-symbols-outlined group-hover:animate-bounce">cloud_upload</span>
                 <span>Connect Spotify &amp; Transfer</span>
                 <span className="absolute right-4 opacity-0 group-hover:opacity-100 transition-opacity text-nord-bg/70">
