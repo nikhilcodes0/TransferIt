@@ -42,7 +42,7 @@ export default function Home() {
       <header className="w-full border-b border-nord-surface-highlight/30 bg-nord-bg/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-nord-surface-highlight flex items-center justify-center text-nord-bg">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-primary to-nord-surface-highlight flex items-center justify-center text-nord-bg">
               <span className="material-symbols-outlined text-[20px]">sync_alt</span>
             </div>
             <h1 className="text-lg font-bold tracking-tight text-white">TransferIt</h1>
@@ -62,7 +62,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-grow flex items-center justify-center relative px-4 py-12 md:py-20">
+      <main className="grow flex items-center justify-center relative px-4 py-12 md:py-20">
         {/* Abstract Background Decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl mix-blend-screen opacity-30 animate-pulse"></div>
@@ -92,7 +92,7 @@ export default function Home() {
 
               {/* Action Button */}
               <button
-                className="group relative w-full flex items-center justify-center gap-3 bg-primary hover:bg-primary-hover text-nord-bg font-bold text-lg py-4 px-6 rounded-xl transition-all duration-200 shadow-glow hover:translate-y-[-1px] active:translate-y-[1px]"
+                className="group relative w-full flex items-center justify-center gap-3 bg-primary hover:bg-primary-hover text-nord-bg font-bold text-lg py-4 px-6 rounded-xl transition-all duration-200 shadow-glow hover:-translate-y-px active:translate-y-px"
                 onClick={() => window.location.href = "/api/auth/spotify"}
               >
                 <span className="material-symbols-outlined group-hover:animate-bounce"><Image src={spotify} alt="Spotify" width={24} height={24} /></span>

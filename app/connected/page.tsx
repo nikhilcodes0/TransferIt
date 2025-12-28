@@ -75,7 +75,7 @@ export default function ConnectedPage() {
         <div className="bg-nord-bg font-display min-h-screen flex flex-col text-nord-subtext overflow-x-hidden">
             <Header showLogout />
 
-            <main className="flex-grow flex flex-col items-center justify-center p-6 relative">
+            <main className="grow flex flex-col items-center justify-center p-6 relative">
                 {/* Background Pattern */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 opacity-30">
                     <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-nord-frost2/20 rounded-full blur-[120px]"></div>
@@ -155,7 +155,7 @@ function ConnectionStatusCard({
                     <div className="flex-1 max-w-[120px] flex flex-col items-center gap-1">
                         <div className="w-full h-1 bg-nord-surface-highlight rounded-full overflow-hidden relative">
                             <div className="absolute inset-y-0 left-0 w-1/2 bg-nord-frost2/50"></div>
-                            <div className="absolute inset-y-0 bg-gradient-to-r from-transparent via-nord-frost2 to-transparent w-[30%] animate-shimmer"></div>
+                            <div className="absolute inset-y-0 bg-linear-to-r from-transparent via-nord-frost2 to-transparent w-[30%] animate-shimmer"></div>
                         </div>
                         <span className="material-symbols-outlined text-nord-frost2/80 text-lg">
                             arrow_forward

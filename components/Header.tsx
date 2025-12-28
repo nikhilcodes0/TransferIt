@@ -16,7 +16,7 @@ export default function Header({ showLogout = false }: HeaderProps) {
                     className="flex items-center gap-3 select-none cursor-pointer"
                     onClick={() => router.push("/")}
                 >
-                    <div className="size-8 rounded-lg bg-gradient-to-br from-nord-frost2 to-nord-frost4 flex items-center justify-center text-nord-bg shadow-[0_0_15px_rgba(136,192,208,0.15)]">
+                    <div className="size-8 rounded-lg bg-linear-to-br from-nord-frost2 to-nord-frost4 flex items-center justify-center text-nord-bg shadow-[0_0_15px_rgba(136,192,208,0.15)]">
                         <span className="material-symbols-outlined text-xl font-bold">graphic_eq</span>
                     </div>
                     <h1 className="text-xl font-bold tracking-tight text-white">TransferIt</h1>
@@ -32,7 +32,7 @@ export default function Header({ showLogout = false }: HeaderProps) {
                         </button>
                         {showLogout && (
                             <>
-                                <div className="h-8 w-[1px] bg-nord-surface-highlight"></div>
+                                <div className="h-8 w-px bg-nord-surface-highlight"></div>
                                 <button
                                     onClick={() => router.push("/")}
                                     className="flex items-center gap-2 text-nord-subtext hover:text-white transition-colors text-sm font-medium"
