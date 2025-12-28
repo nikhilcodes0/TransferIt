@@ -24,18 +24,7 @@ export default function Home() {
             <a className="px-5 py-2 text-sm font-semibold text-nord-subtext hover:text-white hover:bg-nord-surface-highlight rounded-full transition-all" href="#workflow">How it works</a>
             <a className="px-5 py-2 text-sm font-semibold text-nord-subtext hover:text-white hover:bg-nord-surface-highlight rounded-full transition-all" href="#">FAQ</a>
           </nav>
-          <div className="flex items-center gap-4">
-            <button
-              className="hidden md:flex items-center gap-2 text-sm font-bold text-nord-bg bg-white hover:bg-nord-subtext transition-colors px-5 py-2.5 rounded-xl shadow-lg shadow-white/5"
-              onClick={() => window.location.href = "/api/auth/spotify"}
-            >
-              <span>Login</span>
-              <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-            </button>
-            <button className="md:hidden text-nord-text p-2 hover:bg-nord-surface rounded-lg transition-colors">
-              <span className="material-symbols-outlined">menu</span>
-            </button>
-          </div>
+          
         </div>
       </header>
 
@@ -172,10 +161,6 @@ export default function Home() {
           <div className="flex flex-wrap justify-center items-center gap-8">
             <a className="text-sm font-medium text-nord-muted hover:text-primary transition-colors" href="#">Privacy Policy</a>
             <a className="text-sm font-medium text-nord-muted hover:text-primary transition-colors" href="#">Terms of Service</a>
-            <a className="text-sm font-medium text-nord-muted hover:text-primary transition-colors flex items-center gap-2 group" href="#">
-              <span className="material-symbols-outlined text-[18px] group-hover:text-accent-green transition-colors">code</span>
-              Developer API
-            </a>
           </div>
         </div>
       </footer>

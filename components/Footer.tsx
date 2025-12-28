@@ -10,12 +10,7 @@ export default function Footer() {
                     >
                         Privacy Policy
                     </a>
-                    <a
-                        className="text-sm text-nord-muted hover:text-nord-subtext transition-colors"
-                        href="#"
-                    >
-                        Terms of Service
-                    </a>
+                    
                 </div>
             </div>
         </footer>
