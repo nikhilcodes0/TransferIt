@@ -1,14 +1,9 @@
 "use client";
 
-import { cleanSongTitle } from "@/lib/cleanTitle";
+
 
 export default function Home() {
 
-  console.log(cleanSongTitle("Arijit Singh - Tum Hi Ho | Official Video"));
-
-console.log(cleanSongTitle("Tum Hi Ho (Lofi) - Arijit Singh"));
-
-console.log(cleanSongTitle("Tum Hi Ho | Lyrics | Aashiqui 2"));
 
   return (
     <div className="bg-nord-bg text-nord-text font-display overflow-x-hidden min-h-screen flex flex-col">
@@ -108,6 +103,8 @@ console.log(cleanSongTitle("Tum Hi Ho | Lyrics | Aashiqui 2"));
                   <span className="material-symbols-outlined">arrow_forward</span>
                 </span>
               </button>
+              <button onClick={testTransfer}>Test Transfer</button>
+
             </div>
           </div>
 
@@ -155,3 +152,24 @@ console.log(cleanSongTitle("Tum Hi Ho | Lyrics | Aashiqui 2"));
     </div>
   );
 }
+
+async function testTransfer() {
+  const playlistId = "PL6sujEdyc_9GVZvo-9MrJWWi5XcGt-A0A&si=zqnFKwinmHwiuRL0"; // use a real one
+  const ytRes = await fetch(
+    `/api/youtube/playlist?playlistId=${playlistId}`
+  );
+  const ytData = await ytRes.json();
+
+  const res = await fetch("/api/spotify/transfer", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      playlistName: "YT Transfer Test",
+      items: ytData.items,
+    }),
+  });
+
+  const data = await res.json();
+  console.log(data);
+}
+
