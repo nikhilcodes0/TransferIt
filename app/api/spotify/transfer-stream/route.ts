@@ -112,9 +112,7 @@ export async function POST(req: Request) {
                     const item = items[i];
                     const { artist, track } = cleanSongTitle(item.title);
 
-                    console.log(`\n--- Processing: ${item.title}`);
-                    console.log(`Parsed: artist="${artist}", track="${track}"`);
-
+                    
                     if (!track) {
                         skippedCount++;
                         sendSSE(controller, {
@@ -131,7 +129,7 @@ export async function POST(req: Request) {
                     // Use channelTitle as artist fallback
                     const cleanedChannel = item.channelTitle ? cleanChannelTitle(item.channelTitle) : null;
                     const effectiveArtist = artist || cleanedChannel || null;
-                    console.log(`Channel: "${item.channelTitle}" -> Effective artist: "${effectiveArtist}"`);
+                    
 
                     let matched = null;
                     let searchAttempts: string[] = [];
@@ -151,11 +149,9 @@ export async function POST(req: Request) {
                     for (const searchQuery of searches) {
                         if (matched) break;
 
-                        console.log(`Search: "${searchQuery}"`);
                         searchAttempts.push(searchQuery);
 
                         const tracks = await searchSpotify(searchQuery, token);
-                        console.log(`Results: ${tracks.length}`);
 
                         if (tracks.length === 0) continue;
 
@@ -199,8 +195,6 @@ export async function POST(req: Request) {
                             if (titleContains) score += 0.15;
                             if (artistContains) score += 0.15;
 
-                            console.log(`  "${t.name}" by ${t.artists[0]?.name}: score=${score.toFixed(2)}, titleSim=${titleSim.toFixed(2)}, artistSim=${artistSim.toFixed(2)}`);
-
                             if (score > bestScore && score >= 0.5) { // Minimum threshold
                                 bestScore = score;
                                 bestMatch = t;
@@ -209,7 +203,6 @@ export async function POST(req: Request) {
 
                         if (bestMatch && bestScore >= 0.5) {
                             matched = bestMatch;
-                            console.log(`MATCHED with score ${bestScore.toFixed(2)}: "${matched.name}" by ${matched.artists[0]?.name}`);
                         }
                     }
 
@@ -226,7 +219,6 @@ export async function POST(req: Request) {
                         });
                     } else {
                         skippedCount++;
-                        console.log(`SKIPPED: No match found after ${searchAttempts.length} search attempts`);
                         sendSSE(controller, {
                             type: "progress",
                             current: i + 1,

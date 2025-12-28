@@ -3,7 +3,10 @@ import { NextResponse } from "next/server";
 const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID!;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET!;
 const SPOTIFY_REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI!;
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://127.0.0.1:3000";
+
+// Use NEXT_PUBLIC_BASE_URL in production, fallback to 127.0.0.1 only in development
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ||
+  (process.env.NODE_ENV === "development" ? "http://127.0.0.1:3000" : "");
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);

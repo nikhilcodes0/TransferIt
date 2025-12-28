@@ -86,21 +86,21 @@ export default function Home() {
                 <span className="material-symbols-outlined">bolt</span>
               </div>
               <h3 className="text-sm font-bold text-white">Lightning Fast</h3>
-              <p className="text-xs text-nord-muted leading-relaxed">Engineered for speed, processing hundreds of tracks in seconds.</p>
+              <p className="text-xs text-nord-subtext/80 leading-relaxed">Engineered for speed, processing hundreds of tracks in seconds.</p>
             </div>
             <div className="flex flex-col items-center md:items-start gap-2">
               <div className="p-2 bg-nord-surface rounded-lg text-primary mb-1">
                 <span className="material-symbols-outlined">security</span>
               </div>
               <h3 className="text-sm font-bold text-white">Secure Transfer</h3>
-              <p className="text-xs text-nord-muted leading-relaxed">We never store your credentials. Transfers happen in real-time.</p>
+              <p className="text-xs text-nord-subtext/80 leading-relaxed">We never store your credentials. Transfers happen in real-time.</p>
             </div>
             <div className="flex flex-col items-center md:items-start gap-2">
               <div className="p-2 bg-nord-surface rounded-lg text-primary mb-1">
                 <span className="material-symbols-outlined">check_circle</span>
               </div>
               <h3 className="text-sm font-bold text-white">High Accuracy</h3>
-              <p className="text-xs text-nord-muted leading-relaxed">Smart matching algorithm ensures you get the right song every time.</p>
+              <p className="text-xs text-nord-subtext/80 leading-relaxed">Smart matching algorithm ensures you get the right song every time.</p>
             </div>
           </div>
 

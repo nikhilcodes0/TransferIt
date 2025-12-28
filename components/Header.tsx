@@ -27,9 +27,7 @@ export default function Header({ showLogout = false }: HeaderProps) {
                         System Operational
                     </div>
                     <div className="flex items-center gap-4">
-                        <button className="text-nord-subtext hover:text-white transition-colors text-sm font-medium">
-                            Help
-                        </button>
+                        
                         {showLogout && (
                             <>
                                 <div className="h-8 w-px bg-nord-surface-highlight"></div>

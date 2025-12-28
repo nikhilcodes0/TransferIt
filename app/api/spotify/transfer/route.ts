@@ -55,13 +55,7 @@ export async function POST(req: Request) {
     for (const item of items) {
         const { artist, track } = cleanSongTitle(item.title);
 
-        console.log("---");
-        console.log("YouTube title:", item.title);
-        console.log("Parsed artist:", artist, "| Parsed track:", track);
-        console.log("channelTitle:", item.channelTitle);
-
         if (!track) {
-            console.log("SKIPPED: No track extracted");
             skipped.push(item.title);
             continue;
         }
@@ -69,13 +63,10 @@ export async function POST(req: Request) {
         // Use channelTitle as artist fallback if not extracted from title
         const cleanedChannel = item.channelTitle ? cleanChannelTitle(item.channelTitle) : null;
         const effectiveArtist = artist || cleanedChannel || null;
-        console.log("Effective artist:", effectiveArtist);
 
         const q = effectiveArtist
             ? `track:${track} artist:${effectiveArtist}`
             : `track:${track}`;
-
-        console.log("Search query:", q);
 
         const result = await spotifyFetch(
             `/search?q=${encodeURIComponent(q)}&type=track&limit=10`,
@@ -83,30 +74,21 @@ export async function POST(req: Request) {
         );
 
         const tracks = result.tracks.items;
-        console.log("Spotify results:", tracks.length);
 
         let matched = null;
 
         const normalizedArtist = effectiveArtist ? normalize(effectiveArtist) : null;
         const normalizedTrack = normalize(track);
 
-        console.log("Normalized artist:", normalizedArtist, "| Normalized track:", normalizedTrack);
-
         for (const t of tracks) {
             const spotifyTrack = normalize(t.name);
             const spotifyArtists = t.artists.map((a: { name: string }) => normalize(a.name));
-
-            console.log("  Checking:", t.name, "by", t.artists.map((a: { name: string }) => a.name).join(", "));
-            console.log("    Spotify track (normalized):", spotifyTrack);
-            console.log("    Spotify artists (normalized):", spotifyArtists);
 
             // Title matching: check if one contains the other
             const titleMatch =
                 spotifyTrack === normalizedTrack ||
                 spotifyTrack.includes(normalizedTrack) ||
                 normalizedTrack.includes(spotifyTrack);
-
-            console.log("    Title match:", titleMatch);
 
             // If we have an artist, require it to match
             if (normalizedArtist) {
@@ -116,30 +98,23 @@ export async function POST(req: Request) {
                     normalizedArtist.includes(a)
                 );
 
-                console.log("    Artist match:", artistMatch);
-
                 if (artistMatch && titleMatch) {
                     matched = t;
-                    console.log("  MATCHED!");
                     break;
                 }
             } else {
                 // No artist at all - match on title only (rare case)
                 if (titleMatch) {
                     matched = t;
-                    console.log("  MATCHED (title only)!");
                     break;
                 }
             }
         }
 
         if (!matched) {
-            console.log("SKIPPED: No match found");
             skipped.push(item.title);
             continue;
         }
-
-        console.log("ADDED:", matched.name, "by", matched.artists[0].name);
         trackUris.push(matched.uri);
 
     }
