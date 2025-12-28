@@ -89,7 +89,7 @@ export async function POST(req: Request) {
                 });
 
                 // 1. Get Spotify user
-                const user = await spotifyFetch("/me", token);
+                const user = await spotifyFetch("me", token);
 
                 // 2. Create playlist
                 const playlist = await spotifyFetch(
@@ -112,7 +112,7 @@ export async function POST(req: Request) {
                     const item = items[i];
                     const { artist, track } = cleanSongTitle(item.title);
 
-                    
+
                     if (!track) {
                         skippedCount++;
                         sendSSE(controller, {
@@ -129,7 +129,7 @@ export async function POST(req: Request) {
                     // Use channelTitle as artist fallback
                     const cleanedChannel = item.channelTitle ? cleanChannelTitle(item.channelTitle) : null;
                     const effectiveArtist = artist || cleanedChannel || null;
-                    
+
 
                     let matched = null;
                     let searchAttempts: string[] = [];

@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     const { items, playlistName } = await req.json();
 
     // 1. Get Spotify user
-    const user = await spotifyFetch("/me", token);
+    const user = await spotifyFetch("me", token);
 
     // 2. Create playlist
     const playlist = await spotifyFetch(

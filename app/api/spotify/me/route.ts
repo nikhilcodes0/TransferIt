@@ -11,7 +11,7 @@ export async function GET() {
     }
 
     try {
-        const user = await spotifyFetch("/me", token);
+        const user = await spotifyFetch("me", token);
         return NextResponse.json({
             connected: true,
             user: {
@@ -20,7 +20,8 @@ export async function GET() {
                 email: user.email,
             },
         });
-    } catch {
-        return NextResponse.json({ error: "Failed to fetch user" }, { status: 500 });
+    } catch (error) {
+        console.error("Spotify /me error:", error);
+        return NextResponse.json({ error: "Failed to fetch user", details: String(error) }, { status: 500 });
     }
 }
