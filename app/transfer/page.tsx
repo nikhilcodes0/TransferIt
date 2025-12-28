@@ -103,7 +103,6 @@ function TransferContent() {
             if (!response.ok) {
                 const error = await response.json();
                 if (response.status === 401) {
-                    // Not authenticated, redirect to Spotify auth
                     window.location.href = "/api/auth/spotify";
                     return;
                 }
@@ -126,9 +125,8 @@ function TransferContent() {
 
                 buffer += decoder.decode(value, { stream: true });
 
-                // Parse SSE events
                 const lines = buffer.split("\n");
-                buffer = lines.pop() || ""; // Keep incomplete line in buffer
+                buffer = lines.pop() || "";
 
                 for (const line of lines) {
                     if (line.startsWith("data: ")) {
@@ -204,24 +202,39 @@ function TransferContent() {
     const getPlaylistItemCount = () => {
         if (state.step === "ready") return state.playlist.items.length;
         if (state.step === "transferring") return state.playlist.items.length;
+        if (state.step === "complete") return state.logs.length;
         return 0;
+    };
+
+    const getPlaylistName = () => {
+        if (state.step === "ready") return state.playlist.playlistName;
+        if (state.step === "transferring") return state.playlist.playlistName;
+        return "";
+    };
+
+    // Get last 3 logs for display
+    const getRecentLogs = () => {
+        if (state.step === "transferring") {
+            return state.logs.slice(-3);
+        }
+        if (state.step === "complete") {
+            return state.logs.slice(-3);
+        }
+        return [];
     };
 
     return (
         <div className="bg-nord-bg text-nord-subtext font-display overflow-x-hidden min-h-screen flex flex-col">
-            {/* Global styles for shimmer animation */}
+            {/* Shimmer animation */}
             <style>{`
                 @keyframes shimmer {
-                    0% { transform: translateX(-100%); }
-                    100% { transform: translateX(100%); }
-                }
-                .shimmer-effect {
-                    animation: shimmer 1.5s infinite;
+                    0% { transform: translateX(-100%) skewX(-12deg); }
+                    100% { transform: translateX(100%) skewX(-12deg); }
                 }
             `}</style>
 
             {/* Header */}
-            <header className="flex items-center justify-between whitespace-nowrap border-b border-nord-surface px-6 md:px-10 py-3 bg-nord-bg relative z-10">
+            <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-nord-light px-10 py-3 bg-nord-bg relative z-10">
                 <div className="flex items-center gap-4">
                     <div className="size-8 flex items-center justify-center text-nord-frost2">
                         <span className="material-symbols-outlined text-3xl">queue_music</span>
@@ -262,182 +275,189 @@ function TransferContent() {
                                 </div>
                                 <h1 className="text-2xl sm:text-3xl font-bold leading-tight text-nord-snow3">
                                     {state.step === "loading" && "Loading playlist..."}
-                                    {state.step === "ready" && state.playlist.playlistName}
-                                    {state.step === "transferring" && state.playlist.playlistName}
+                                    {state.step === "ready" && getPlaylistName()}
+                                    {state.step === "transferring" && `Transferring: ${getPlaylistName()}`}
                                     {state.step === "complete" && "Transfer Complete!"}
                                     {state.step === "error" && "Transfer Failed"}
                                 </h1>
                                 <p className="text-nord-subtext/70 text-sm font-medium">
                                     {state.step === "loading" && "Fetching playlist data..."}
-                                    {state.step === "ready" && `${state.playlist.items.length} tracks ready to transfer`}
-                                    {state.step === "transferring" && `Processing track ${state.current} of ${state.total}`}
+                                    {state.step === "ready" && `${getPlaylistItemCount()} tracks ready to transfer`}
+                                    {state.step === "transferring" && `Processing track ${state.current} of ${state.total}...`}
                                     {state.step === "complete" && `${state.added} tracks added, ${state.skipped} skipped`}
                                     {state.step === "error" && state.message}
                                 </p>
                             </div>
                         </div>
 
-                        {/* Start Transfer Button - Prominent placement for ready state */}
-                        {state.step === "ready" && (
-                            <div className="px-6 sm:px-8 py-6 border-b border-nord-surface">
-                                <button
-                                    onClick={startTransfer}
-                                    style={{
-                                        backgroundColor: "#88c0d0",
-                                        color: "#2e3440",
-                                    }}
-                                    className="w-full flex items-center justify-center gap-3 font-bold text-lg py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:brightness-110 active:brightness-95 cursor-pointer"
-                                >
-                                    <span className="material-symbols-outlined text-2xl">play_arrow</span>
-                                    Start Transfer
-                                </button>
-                            </div>
-                        )}
-
-                        {/* Progress Section - Only show during/after transfer */}
-                        {(state.step === "transferring" || state.step === "complete") && (
-                            <div className="px-6 sm:px-8 py-6 border-b border-nord-bg">
-                                {/* Progress Bar */}
-                                <div className="mb-2 flex items-center justify-between text-sm">
-                                    <span className="text-nord-subtext font-medium">Progress</span>
-                                    <span className="text-nord-frost2 font-bold">{getProgress()}%</span>
-                                </div>
-                                <div className="w-full bg-nord-bg rounded-full h-3 overflow-hidden ring-1 ring-inset ring-white/5">
-                                    <div
-                                        className="bg-nord-frost2 h-full rounded-full transition-all duration-300 ease-out relative"
-                                        style={{ width: `${getProgress()}%` }}
-                                    >
-                                        {state.step === "transferring" && (
-                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent shimmer-effect" />
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* Log output */}
-                                <div
-                                    ref={logsContainerRef}
-                                    className="mt-4 w-full bg-nord-bg rounded-lg p-4 font-mono text-sm border border-nord-surface shadow-inner h-[200px] overflow-y-auto"
-                                >
-                                    {(state.step === "transferring" ? state.logs : state.logs).map((log, i) => (
-                                        <div
-                                            key={i}
-                                            className="py-0.5"
-                                            style={{
-                                                color: log.status === "matched"
-                                                    ? "#a3be8c"
-                                                    : log.status === "skipped"
-                                                        ? "#bf616a"
-                                                        : "#88c0d0"
-                                            }}
-                                        >
-                                            <span className="inline-block w-5">
-                                                {log.status === "matched" ? "✓" : log.status === "skipped" ? "✗" : "›"}
-                                            </span>
-                                            {log.status === "matched" && log.spotifyTrack
-                                                ? `${log.spotifyTrack} - ${log.spotifyArtist}`
-                                                : log.title}
-                                            {log.status === "skipped" && log.skipReason && (
-                                                <span style={{ color: "#bf616a", opacity: 0.7 }}> ({log.skipReason})</span>
-                                            )}
-                                        </div>
-                                    ))}
-                                    {state.step === "transferring" && state.logs.length === 0 && (
-                                        <div className="text-nord-highlight animate-pulse">Starting transfer...</div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Steps Timeline */}
-                        <div className="p-6 sm:p-8 flex flex-col gap-4">
+                        {/* Steps Section */}
+                        <div className="p-6 sm:p-8 flex flex-col gap-6">
                             {/* Step 1: Fetching */}
-                            <div className="flex items-center gap-4">
-                                <div className="flex-shrink-0">
+                            <div className="grid grid-cols-[32px_1fr] gap-x-4">
+                                <div className="flex flex-col items-center">
                                     {getStepStatus(1) === "complete" ? (
                                         <div className="flex items-center justify-center size-8 rounded-full bg-nord-green/20 text-nord-green">
-                                            <span className="material-symbols-outlined text-lg">check</span>
+                                            <span className="material-symbols-outlined text-lg font-bold">check</span>
                                         </div>
                                     ) : getStepStatus(1) === "active" ? (
-                                        <div className="flex items-center justify-center size-8 rounded-full bg-nord-frost2 text-nord-bg">
-                                            <span className="material-symbols-outlined text-lg animate-spin" style={{ animationDuration: "2s" }}>sync</span>
+                                        <div className="relative flex items-center justify-center size-8">
+                                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-nord-frost2 opacity-20" />
+                                            <div className="relative inline-flex items-center justify-center rounded-full bg-nord-frost2 text-nord-bg size-8 shadow-[0_0_15px_rgba(136,192,208,0.4)]">
+                                                <span className="material-symbols-outlined text-lg animate-spin" style={{ animationDuration: "3s" }}>sync</span>
+                                            </div>
                                         </div>
                                     ) : (
                                         <div className="flex items-center justify-center size-8 rounded-full border-2 border-nord-highlight text-nord-highlight">
                                             <span className="material-symbols-outlined text-lg">download</span>
                                         </div>
                                     )}
+                                    <div className={`w-0.5 h-full min-h-[24px] ${getStepStatus(1) === "complete" ? "bg-nord-green/20" : "bg-nord-surface"}`} />
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className={`text-sm font-bold ${getStepStatus(1) === "pending" ? "text-nord-highlight" : "text-nord-snow3"}`}>
-                                        Fetch playlist data
+                                <div className="pb-6">
+                                    <h3 className={`text-base font-bold mb-0.5 ${getStepStatus(1) === "pending" ? "text-nord-highlight" : "text-nord-snow3"}`}>
+                                        Fetching playlist data
                                     </h3>
-                                    <p className="text-xs text-nord-subtext/60">
+                                    <p className="text-sm text-nord-subtext/60">
                                         {state.step === "loading" && "Connecting to YouTube..."}
-                                        {state.step !== "loading" && state.step !== "error" && `${getPlaylistItemCount()} tracks found`}
-                                        {state.step === "error" && "Failed"}
+                                        {state.step !== "loading" && state.step !== "error" && `Found ${getPlaylistItemCount()} tracks in source playlist.`}
+                                        {state.step === "error" && "Failed to fetch playlist"}
                                     </p>
                                 </div>
                             </div>
 
                             {/* Step 2: Matching */}
-                            <div className="flex items-center gap-4">
-                                <div className="flex-shrink-0">
+                            <div className="grid grid-cols-[32px_1fr] gap-x-4">
+                                <div className="flex flex-col items-center">
                                     {getStepStatus(2) === "complete" ? (
                                         <div className="flex items-center justify-center size-8 rounded-full bg-nord-green/20 text-nord-green">
-                                            <span className="material-symbols-outlined text-lg">check</span>
+                                            <span className="material-symbols-outlined text-lg font-bold">check</span>
                                         </div>
                                     ) : getStepStatus(2) === "active" ? (
-                                        <div className="flex items-center justify-center size-8 rounded-full bg-nord-frost2 text-nord-bg">
-                                            <span className="material-symbols-outlined text-lg animate-spin" style={{ animationDuration: "2s" }}>sync</span>
+                                        <div className="relative flex items-center justify-center size-8">
+                                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-nord-frost2 opacity-20" />
+                                            <div className="relative inline-flex items-center justify-center rounded-full bg-nord-frost2 text-nord-bg size-8 shadow-[0_0_15px_rgba(136,192,208,0.4)]">
+                                                <span className="material-symbols-outlined text-lg animate-spin" style={{ animationDuration: "3s" }}>sync</span>
+                                            </div>
                                         </div>
                                     ) : (
                                         <div className="flex items-center justify-center size-8 rounded-full border-2 border-nord-highlight text-nord-highlight">
                                             <span className="material-symbols-outlined text-lg">search</span>
                                         </div>
                                     )}
+                                    <div className={`w-0.5 h-full min-h-[24px] ${getStepStatus(2) === "complete" ? "bg-nord-green/20" : "bg-nord-surface"}`} />
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className={`text-sm font-bold ${getStepStatus(2) === "pending" ? "text-nord-highlight" : "text-nord-snow3"}`}>
-                                        Match songs on Spotify
-                                    </h3>
-                                    <p className="text-xs text-nord-subtext/60">
-                                        {getStepStatus(2) === "pending" && "Waiting..."}
-                                        {getStepStatus(2) === "active" && state.step === "transferring" && `${state.current}/${state.total} processed`}
-                                        {getStepStatus(2) === "complete" && "All tracks processed"}
-                                    </p>
+                                <div className="pb-6 flex flex-col gap-3">
+                                    <div>
+                                        <h3 className={`text-base font-bold mb-0.5 ${getStepStatus(2) === "pending" ? "text-nord-highlight" : "text-nord-snow3"}`}>
+                                            Matching songs on Spotify
+                                        </h3>
+                                        <p className={`text-sm font-medium ${getStepStatus(2) === "active" ? "text-nord-frost2" : "text-nord-subtext/60"}`}>
+                                            {getStepStatus(2) === "pending" && "Waiting for playlist data..."}
+                                            {getStepStatus(2) === "active" && state.step === "transferring" && `Processing track ${state.current} of ${state.total}...`}
+                                            {getStepStatus(2) === "complete" && "All tracks processed."}
+                                        </p>
+                                    </div>
+
+                                    {/* Progress bar - show during transfer or complete */}
+                                    {(state.step === "transferring" || state.step === "complete") && (
+                                        <>
+                                            <div className="w-full bg-nord-bg rounded-full h-2 overflow-hidden ring-1 ring-inset ring-white/5">
+                                                <div
+                                                    className="bg-nord-frost2 h-full rounded-full transition-all duration-500 ease-out relative overflow-hidden"
+                                                    style={{ width: `${getProgress()}%` }}
+                                                >
+                                                    {state.step === "transferring" && (
+                                                        <div
+                                                            className="absolute inset-0 bg-white/20 w-full h-full"
+                                                            style={{ animation: "shimmer 2s infinite" }}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Log output */}
+                                            <div
+                                                ref={logsContainerRef}
+                                                className="mt-2 w-full bg-nord-bg rounded-lg p-3 font-mono text-xs border border-nord-surface shadow-inner max-h-[100px] overflow-hidden flex flex-col justify-end"
+                                            >
+                                                {getRecentLogs().map((log, i, arr) => {
+                                                    const isLast = i === arr.length - 1;
+                                                    const opacity = isLast ? 1 : i === arr.length - 2 ? 0.75 : 0.5;
+
+                                                    if (log.status === "matched") {
+                                                        return (
+                                                            <div key={i} style={{ opacity, color: isLast ? "#a3be8c" : "#d8dee9" }}>
+                                                                ✓ Found: {log.spotifyTrack} - {log.spotifyArtist}
+                                                            </div>
+                                                        );
+                                                    } else if (log.status === "skipped") {
+                                                        return (
+                                                            <div key={i} style={{ opacity, color: "#bf616a" }}>
+                                                                ✗ Skipped: {log.title} {log.skipReason && `(${log.skipReason})`}
+                                                            </div>
+                                                        );
+                                                    } else {
+                                                        return (
+                                                            <div key={i} style={{ color: "#a3be8c" }}>
+                                                                &gt; Matching: {log.title}...
+                                                            </div>
+                                                        );
+                                                    }
+                                                })}
+                                                {state.step === "transferring" && state.logs.length === 0 && (
+                                                    <div className="text-nord-frost2">&gt; Starting transfer...</div>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
+
+                                    {/* Start Transfer button */}
+                                    {state.step === "ready" && (
+                                        <button
+                                            onClick={startTransfer}
+                                            style={{
+                                                backgroundColor: "#88c0d0",
+                                                color: "#2e3440",
+                                            }}
+                                            className="mt-2 w-full flex items-center justify-center gap-2 font-bold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:brightness-110 cursor-pointer"
+                                        >
+                                            <span className="material-symbols-outlined">play_arrow</span>
+                                            Start Transfer
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 
-                            {/* Step 3: Creating */}
-                            <div className="flex items-center gap-4">
-                                <div className="flex-shrink-0">
+                            {/* Step 3: Creating Playlist */}
+                            <div className="grid grid-cols-[32px_1fr] gap-x-4">
+                                <div className="flex flex-col items-center">
                                     {getStepStatus(3) === "complete" ? (
                                         <div className="flex items-center justify-center size-8 rounded-full bg-nord-green/20 text-nord-green">
-                                            <span className="material-symbols-outlined text-lg">check</span>
+                                            <span className="material-symbols-outlined text-lg font-bold">check</span>
                                         </div>
                                     ) : (
                                         <div className="flex items-center justify-center size-8 rounded-full border-2 border-nord-highlight text-nord-highlight">
-                                            <span className="material-symbols-outlined text-lg">playlist_add</span>
+                                            <span className="material-symbols-outlined text-lg">music_note</span>
                                         </div>
                                     )}
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className={`text-sm font-bold ${getStepStatus(3) === "complete" ? "text-nord-snow3" : "text-nord-highlight"}`}>
-                                        Create Spotify playlist
+                                <div className="pt-1">
+                                    <h3 className={`text-base font-bold mb-0.5 ${getStepStatus(3) === "complete" ? "text-nord-snow3" : "text-nord-highlight"}`}>
+                                        {state.step === "complete" ? "Playlist Created!" : "Creating Spotify playlist"}
                                     </h3>
-                                    <p className="text-xs text-nord-subtext/60">
+                                    <p className="text-sm text-nord-subtext/60">
                                         {state.step === "complete" ? (
                                             <a
                                                 href={state.playlistUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="text-nord-frost2 hover:underline inline-flex items-center gap-1"
+                                                className="text-nord-frost2 hover:underline flex items-center gap-1"
                                             >
                                                 Open in Spotify
-                                                <span className="material-symbols-outlined text-xs">open_in_new</span>
+                                                <span className="material-symbols-outlined text-sm">open_in_new</span>
                                             </a>
                                         ) : (
-                                            "Pending..."
+                                            "Pending completion of matching."
                                         )}
                                     </p>
                                 </div>
@@ -445,39 +465,26 @@ function TransferContent() {
                         </div>
 
                         {/* Footer */}
-                        <div className="bg-nord-bg/50 p-4 border-t border-nord-surface flex justify-between items-center">
-                            {state.step === "transferring" ? (
-                                <p className="text-xs text-nord-highlight flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-sm animate-pulse">info</span>
-                                    Please do not close this tab
-                                </p>
-                            ) : state.step === "complete" ? (
-                                <p className="text-xs text-nord-green flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-sm">check_circle</span>
-                                    Transfer completed successfully!
-                                </p>
-                            ) : state.step === "error" ? (
-                                <p className="text-xs text-nord-red flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-sm">error</span>
-                                    {state.message}
-                                </p>
+                        <div className="bg-nord-bg/30 p-4 border-t border-nord-surface flex justify-between items-center">
+                            <p className="text-xs text-nord-highlight">
+                                {state.step === "transferring" && "Please do not close this tab."}
+                                {state.step === "complete" && "Transfer completed successfully!"}
+                                {state.step === "ready" && "Ready when you are."}
+                                {state.step === "error" && state.message}
+                            </p>
+                            {state.step !== "complete" ? (
+                                <button
+                                    onClick={() => router.push("/")}
+                                    className="px-4 py-2 rounded-lg text-sm font-medium text-nord-subtext hover:text-nord-red hover:bg-nord-red/10 transition-colors"
+                                >
+                                    Cancel Transfer
+                                </button>
                             ) : (
-                                <p className="text-xs text-nord-highlight">Ready when you are</p>
-                            )}
-
-                            {state.step === "complete" ? (
                                 <button
                                     onClick={() => router.push("/")}
                                     className="px-4 py-2 rounded-lg text-sm font-medium bg-nord-frost2 text-nord-bg hover:bg-nord-frost3 transition-colors"
                                 >
                                     Transfer Another
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={() => router.push("/")}
-                                    className="px-4 py-2 rounded-lg text-sm font-medium text-nord-subtext hover:text-nord-red hover:bg-nord-red/10 transition-colors"
-                                >
-                                    Cancel
                                 </button>
                             )}
                         </div>
@@ -493,7 +500,7 @@ export default function TransferProgress() {
         <Suspense fallback={
             <div className="bg-nord-bg min-h-screen flex items-center justify-center">
                 <div className="text-nord-subtext flex items-center gap-2">
-                    <span className="material-symbols-outlined animate-spin">sync</span>
+                    <span className="material-symbols-outlined animate-spin" style={{ animationDuration: "3s" }}>sync</span>
                     Loading...
                 </div>
             </div>

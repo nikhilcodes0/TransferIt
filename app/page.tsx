@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { extractPlaylistId } from "@/lib/youtube";
+import spotify from "@/public/spotify.png";
 
 export default function Home() {
   const router = useRouter();
@@ -86,61 +88,15 @@ export default function Home() {
           <div className="w-full bg-nord-surface border border-nord-surface-highlight/50 rounded-2xl shadow-2xl p-2 md:p-3">
             <div className="bg-nord-bg/50 rounded-xl border border-nord-surface-highlight/30 p-6 md:p-8 flex flex-col gap-6">
               {/* Input Field Group */}
-              <div className="space-y-3">
-                <label className="block text-sm font-semibold text-nord-subtext ml-1" htmlFor="playlist-url">
-                  Paste Playlist URL
-                </label>
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <span className="material-symbols-outlined text-nord-muted group-focus-within:text-primary transition-colors">link</span>
-                  </div>
-                  <input
-                    className={`block w-full pl-12 pr-4 py-4 bg-nord-bg border rounded-xl text-white placeholder-nord-muted focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all shadow-inner text-base font-medium ${error ? "border-nord-red" : "border-nord-surface-highlight"
-                      }`}
-                    id="playlist-url"
-                    name="playlist-url"
-                    placeholder="https://music.youtube.com/playlist?list=..."
-                    type="text"
-                    value={playlistUrl}
-                    onChange={(e) => {
-                      setPlaylistUrl(e.target.value);
-                      setError(null);
-                    }}
-                    onKeyDown={handleKeyDown}
-                  />
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                    <div className="hidden group-focus-within:flex items-center justify-center bg-nord-surface-highlight/50 text-xs text-nord-subtext px-2 py-1 rounded border border-nord-surface-highlight">
-                      Hit Enter ↵
-                    </div>
-                  </div>
-                </div>
-                {error ? (
-                  <p className="text-xs text-nord-red flex items-center gap-1.5 ml-1">
-                    <span className="material-symbols-outlined text-[14px]">error</span>
-                    {error}
-                  </p>
-                ) : (
-                  <p className="text-xs text-nord-muted flex items-center gap-1.5 ml-1">
-                    <span className="material-symbols-outlined text-[14px]">info</span>
-                    Works with public or unlisted playlists only
-                  </p>
-                )}
-              </div>
 
-              {/* Divider */}
-              <div className="relative flex py-1 items-center">
-                <div className="flex-grow border-t border-nord-surface-highlight"></div>
-                <span className="flex-shrink-0 mx-4 text-nord-muted text-xs uppercase font-bold tracking-widest">Action</span>
-                <div className="flex-grow border-t border-nord-surface-highlight"></div>
-              </div>
 
               {/* Action Button */}
               <button
                 className="group relative w-full flex items-center justify-center gap-3 bg-primary hover:bg-primary-hover text-nord-bg font-bold text-lg py-4 px-6 rounded-xl transition-all duration-200 shadow-glow hover:translate-y-[-1px] active:translate-y-[1px]"
-                onClick={handleTransfer}
+                onClick={() => window.location.href = "/api/auth/spotify"}
               >
-                <span className="material-symbols-outlined group-hover:animate-bounce">cloud_upload</span>
-                <span>Start Transfer</span>
+                <span className="material-symbols-outlined group-hover:animate-bounce"><Image src={spotify} alt="Spotify" width={24} height={24} /></span>
+                <span>Connect to Spotify</span>
                 <span className="absolute right-4 opacity-0 group-hover:opacity-100 transition-opacity text-nord-bg/70">
                   <span className="material-symbols-outlined">arrow_forward</span>
                 </span>
