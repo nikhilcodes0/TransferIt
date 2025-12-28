@@ -22,6 +22,10 @@
   --color-nord-red: #bf616a;
   --color-nord-dark: #2e3440;
 
+  /* Accent colors for landing page */
+  --color-accent-green: #a3be8c;
+  --color-accent-red: #bf616a;
+
   /* Font families */
   --font-family-display: var(--font-manrope), sans-serif;
   --font-family-body: var(--font-noto-sans), sans-serif;
