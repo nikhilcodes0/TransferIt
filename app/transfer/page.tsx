@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 type YouTubeItem = {
     videoId: string;
@@ -233,24 +235,7 @@ function TransferContent() {
                 }
             `}</style>
 
-            {/* Header */}
-            <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-nord-light px-10 py-3 bg-nord-bg relative z-10">
-                <div className="flex items-center gap-4">
-                    <div className="size-8 flex items-center justify-center text-nord-frost2">
-                        <span className="material-symbols-outlined text-3xl">queue_music</span>
-                    </div>
-                    <h2 className="text-lg font-bold leading-tight tracking-[-0.015em] text-nord-snow3">
-                        Playlist Transfer
-                    </h2>
-                </div>
-                <button
-                    onClick={() => router.push("/")}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-nord-subtext hover:text-white hover:bg-nord-surface transition-colors"
-                >
-                    <span className="material-symbols-outlined text-lg">arrow_back</span>
-                    Back
-                </button>
-            </header>
+            <Header showLogout />
 
             {/* Main Content */}
             <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 relative">
@@ -491,6 +476,8 @@ function TransferContent() {
                     </div>
                 </div>
             </main>
+
+            <Footer />
         </div>
     );
 }

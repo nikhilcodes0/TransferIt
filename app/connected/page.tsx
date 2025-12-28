@@ -142,7 +142,7 @@ function ConnectionStatusCard({
 
             <div className="p-6 sm:p-8 flex flex-col gap-8">
                 {/* Connected Accounts Visual */}
-                <div className="flex items-center justify-center gap-4 sm:gap-8 py-4">
+                <div className="flex items-start justify-center gap-4 sm:gap-8 py-4">
                     {/* Source (YouTube) */}
                     <div className="flex flex-col items-center gap-3 opacity-60">
                         <div className="size-16 rounded-2xl bg-nord-bg flex items-center justify-center border border-nord-surface-highlight shadow-inner">
@@ -152,14 +152,15 @@ function ConnectionStatusCard({
                     </div>
 
                     {/* Connector Line */}
-                    <div className="flex-1 max-w-[120px] flex flex-col items-center gap-1">
-                        <div className="w-full h-1 bg-nord-surface-highlight rounded-full overflow-hidden relative">
-                            <div className="absolute inset-y-0 left-0 w-1/2 bg-nord-frost2/50"></div>
-                            <div className="absolute inset-y-0 bg-linear-to-r from-transparent via-nord-frost2 to-transparent w-[30%] animate-shimmer"></div>
+                    <div className="flex-1 max-w-[120px] flex items-center mt-8">
+                        <div className="w-full h-1.5 bg-nord-surface-highlight rounded-full overflow-hidden relative">
+                            <div
+                                className="absolute inset-y-0 w-[40%] animate-shimmer"
+                                style={{
+                                    background: "linear-gradient(90deg, transparent, #88c0d0, transparent)"
+                                }}
+                            ></div>
                         </div>
-                        <span className="material-symbols-outlined text-nord-frost2/80 text-lg">
-                            arrow_forward
-                        </span>
                     </div>
 
                     {/* Destination (Spotify - Connected) */}
