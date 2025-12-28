@@ -79,10 +79,33 @@ function TransferContent() {
         }
     }, [state]);
 
+    // Navigate to summary page when transfer completes
+    useEffect(() => {
+        if (state.step === "complete") {
+            // Get playlist name from sessionStorage
+            const playlistName = sessionStorage.getItem("currentPlaylistName") || "Your Playlist";
+            sessionStorage.removeItem("currentPlaylistName");
+
+            // Navigate with essential data as URL params
+            // Note: skipped songs are already stored in sessionStorage by the complete handler
+            const params = new URLSearchParams({
+                name: playlistName,
+                url: state.playlistUrl,
+                added: String(state.added),
+                skipped: String(state.skipped),
+            });
+
+            router.push(`/summary?${params.toString()}`);
+        }
+    }, [state, router]);
+
     const startTransfer = async () => {
         if (state.step !== "ready") return;
 
         const playlist = state.playlist;
+
+        // Store playlist name for summary page
+        sessionStorage.setItem("currentPlaylistName", playlist.playlistName);
 
         setState({
             step: "transferring",
@@ -157,6 +180,24 @@ function TransferContent() {
                             } else if (data.type === "complete") {
                                 setState((prev) => {
                                     if (prev.step !== "transferring") return prev;
+
+                                    // Store skipped songs now while we have access to logs
+                                    const skippedSongs = prev.logs
+                                        .filter((log) => log.status === "skipped")
+                                        .map((log) => ({
+                                            title: log.title,
+                                            reason: log.skipReason || "NOT FOUND",
+                                        }));
+
+                                    console.log("📋 Transfer complete! Logs count:", prev.logs.length);
+                                    console.log("📋 Skipped songs count:", skippedSongs.length);
+                                    console.log("📋 Skipped songs:", skippedSongs);
+
+                                    if (skippedSongs.length > 0) {
+                                        sessionStorage.setItem("skippedSongs", JSON.stringify(skippedSongs));
+                                        console.log("📋 Stored in sessionStorage");
+                                    }
+
                                     return {
                                         step: "complete",
                                         playlistUrl: data.playlistUrl,
