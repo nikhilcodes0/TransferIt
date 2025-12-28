@@ -11,12 +11,27 @@
   --color-nord-subtext: #d8dee9;
   --color-nord-muted: #4c566a;
 
+  /* Extended Nord colors */
+  --color-nord-light: #3b4252;
+  --color-nord-highlight: #4c566a;
+  --color-nord-snow3: #eceff4;
+  --color-nord-frost2: #88c0d0;
+  --color-nord-frost3: #81a1c1;
+  --color-nord-frost4: #5e81ac;
+  --color-nord-green: #a3be8c;
+  --color-nord-red: #bf616a;
+  --color-nord-dark: #2e3440;
+
   /* Font families */
   --font-family-display: var(--font-manrope), sans-serif;
   --font-family-body: var(--font-noto-sans), sans-serif;
 
   /* Box shadow */
   --shadow-glow: 0 0 20px -5px rgb(127 161 195 / 0.3);
+
+  /* Animations */
+  --animate-spin-slow: spin 3s linear infinite;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 body {

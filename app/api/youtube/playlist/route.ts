@@ -21,6 +21,22 @@ export async function GET(req: Request) {
 
   let items: YouTubeItem[] = [];
   let nextPageToken: string | undefined = undefined;
+  let playlistName: string = "YouTube Playlist";
+
+  // Fetch playlist details (title)
+  const playlistUrl = new URL(
+    "https://www.googleapis.com/youtube/v3/playlists"
+  );
+  playlistUrl.searchParams.set("part", "snippet");
+  playlistUrl.searchParams.set("id", playlistId);
+  playlistUrl.searchParams.set("key", YOUTUBE_API_KEY);
+
+  const playlistRes = await fetch(playlistUrl.toString());
+  const playlistData = await playlistRes.json();
+
+  if (playlistData.items && playlistData.items.length > 0) {
+    playlistName = playlistData.items[0].snippet.title;
+  }
 
   do {
     const url = new URL(
@@ -55,5 +71,5 @@ export async function GET(req: Request) {
     nextPageToken = data.nextPageToken;
   } while (nextPageToken);
 
-  return NextResponse.json({ items });
+  return NextResponse.json({ items, playlistName });
 }

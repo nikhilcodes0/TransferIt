@@ -1,9 +1,38 @@
 "use client";
 
-
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { extractPlaylistId } from "@/lib/youtube";
 
 export default function Home() {
+  const router = useRouter();
+  const [playlistUrl, setPlaylistUrl] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
+  const handleTransfer = () => {
+    setError(null);
+
+    if (!playlistUrl.trim()) {
+      setError("Please enter a YouTube playlist URL");
+      return;
+    }
+
+    const playlistId = extractPlaylistId(playlistUrl);
+
+    if (!playlistId) {
+      setError("Invalid YouTube playlist URL. Please check the URL and try again.");
+      return;
+    }
+
+    // Redirect to transfer page with playlist ID
+    router.push(`/transfer?playlistId=${encodeURIComponent(playlistId)}`);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleTransfer();
+    }
+  };
 
   return (
     <div className="bg-nord-bg text-nord-text font-display overflow-x-hidden min-h-screen flex flex-col">
@@ -14,7 +43,7 @@ export default function Home() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-nord-surface-highlight flex items-center justify-center text-nord-bg">
               <span className="material-symbols-outlined text-[20px]">sync_alt</span>
             </div>
-            <h1 className="text-lg font-bold tracking-tight text-white">TransferTool</h1>
+            <h1 className="text-lg font-bold tracking-tight text-white">TransferIt</h1>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-nord-subtext">
             <a className="hover:text-primary transition-colors" href="#">How it works</a>
@@ -66,11 +95,18 @@ export default function Home() {
                     <span className="material-symbols-outlined text-nord-muted group-focus-within:text-primary transition-colors">link</span>
                   </div>
                   <input
-                    className="block w-full pl-12 pr-4 py-4 bg-nord-bg border border-nord-surface-highlight rounded-xl text-white placeholder-nord-muted focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all shadow-inner text-base font-medium"
+                    className={`block w-full pl-12 pr-4 py-4 bg-nord-bg border rounded-xl text-white placeholder-nord-muted focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all shadow-inner text-base font-medium ${error ? "border-nord-red" : "border-nord-surface-highlight"
+                      }`}
                     id="playlist-url"
                     name="playlist-url"
                     placeholder="https://music.youtube.com/playlist?list=..."
                     type="text"
+                    value={playlistUrl}
+                    onChange={(e) => {
+                      setPlaylistUrl(e.target.value);
+                      setError(null);
+                    }}
+                    onKeyDown={handleKeyDown}
                   />
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                     <div className="hidden group-focus-within:flex items-center justify-center bg-nord-surface-highlight/50 text-xs text-nord-subtext px-2 py-1 rounded border border-nord-surface-highlight">
@@ -78,10 +114,17 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                <p className="text-xs text-nord-muted flex items-center gap-1.5 ml-1">
-                  <span className="material-symbols-outlined text-[14px]">info</span>
-                  Works with public or unlisted playlists only
-                </p>
+                {error ? (
+                  <p className="text-xs text-nord-red flex items-center gap-1.5 ml-1">
+                    <span className="material-symbols-outlined text-[14px]">error</span>
+                    {error}
+                  </p>
+                ) : (
+                  <p className="text-xs text-nord-muted flex items-center gap-1.5 ml-1">
+                    <span className="material-symbols-outlined text-[14px]">info</span>
+                    Works with public or unlisted playlists only
+                  </p>
+                )}
               </div>
 
               {/* Divider */}
@@ -92,19 +135,16 @@ export default function Home() {
               </div>
 
               {/* Action Button */}
-              <button className="group relative w-full flex items-center justify-center gap-3 bg-primary hover:bg-primary-hover text-nord-bg font-bold text-lg py-4 px-6 rounded-xl transition-all duration-200 shadow-glow hover:translate-y-[-1px] active:translate-y-[1px]"
-              onClick={() => {
-                window.location.href = "/api/auth/spotify";
-              }}
+              <button
+                className="group relative w-full flex items-center justify-center gap-3 bg-primary hover:bg-primary-hover text-nord-bg font-bold text-lg py-4 px-6 rounded-xl transition-all duration-200 shadow-glow hover:translate-y-[-1px] active:translate-y-[1px]"
+                onClick={handleTransfer}
               >
                 <span className="material-symbols-outlined group-hover:animate-bounce">cloud_upload</span>
-                <span>Connect Spotify &amp; Transfer</span>
+                <span>Start Transfer</span>
                 <span className="absolute right-4 opacity-0 group-hover:opacity-100 transition-opacity text-nord-bg/70">
                   <span className="material-symbols-outlined">arrow_forward</span>
                 </span>
               </button>
-              <button onClick={testTransfer}>Test Transfer</button>
-
             </div>
           </div>
 
@@ -138,7 +178,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="w-full border-t border-nord-surface-highlight/30 py-8 bg-nord-bg">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-nord-muted">© 2024 TransferTool. All rights reserved.</p>
+          <p className="text-sm text-nord-muted">© 2024 TransferIt. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <a className="text-sm text-nord-muted hover:text-nord-subtext transition-colors" href="#">Privacy Policy</a>
             <a className="text-sm text-nord-muted hover:text-nord-subtext transition-colors" href="#">Terms of Service</a>
@@ -152,24 +192,3 @@ export default function Home() {
     </div>
   );
 }
-
-async function testTransfer() {
-  const playlistId = "PL6sujEdyc_9GVZvo-9MrJWWi5XcGt-A0A&si=zqnFKwinmHwiuRL0"; // use a real one
-  const ytRes = await fetch(
-    `/api/youtube/playlist?playlistId=${playlistId}`
-  );
-  const ytData = await ytRes.json();
-
-  const res = await fetch("/api/spotify/transfer", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      playlistName: "YT Transfer Test",
-      items: ytData.items,
-    }),
-  });
-
-  const data = await res.json();
-  console.log(data);
-}
-
