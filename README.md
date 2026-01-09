@@ -15,6 +15,8 @@ Due to **Spotify's OAuth restrictions for individual developers**, this project 
 - You must provide your own API keys
 - Only you (and users you whitelist) can use your instance
 
+> **💡 Don't want to self-host?** I can add up to **20 users** to my Spotify app whitelist. If you'd like access without setting up your own API keys, contact me with your Spotify email and username.
+
 This is a Spotify platform limitation, not a design choice. Self-hosting ensures you have full control over your data and credentials.
 
 ## Features
