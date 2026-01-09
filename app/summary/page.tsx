@@ -42,18 +42,13 @@ function SummaryContent() {
         // Get skipped songs from sessionStorage
         let skippedSongs: SkippedSong[] = [];
         const storedSkipped = sessionStorage.getItem("skippedSongs");
-        console.log("📥 Summary page - storedSkipped from sessionStorage:", storedSkipped);
         if (storedSkipped) {
             try {
                 skippedSongs = JSON.parse(storedSkipped);
-                console.log("📥 Parsed skipped songs:", skippedSongs);
                 sessionStorage.removeItem("skippedSongs");
             } catch {
-                console.log("📥 Failed to parse skipped songs");
                 skippedSongs = [];
             }
-        } else {
-            console.log("📥 No skippedSongs found in sessionStorage");
         }
 
         setSummaryData({

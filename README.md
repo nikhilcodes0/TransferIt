@@ -1,36 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TransferIt
 
-## Getting Started
+**Transfer public YouTube / YouTube Music playlists to Spotify using just a playlist URL.**
 
-First, run the development server:
+TransferIt is a developer-friendly, self-hosted tool that migrates your music playlists from YouTube Music to Spotify. No sign-up required—just paste your playlist URL and go.
+
+![Transfer Flow](https://img.shields.io/badge/YouTube-Spotify-green?style=for-the-badge&logo=spotify)
+
+## Why Self-Hosted?
+
+Due to **Spotify's OAuth restrictions for individual developers**, this project must be self-hosted. Spotify requires apps in "Development Mode" to explicitly whitelist each user's email address before they can authenticate—making it impractical to run as a public service.
+
+**This means:**
+- You must create your own Spotify Developer App
+- You must provide your own API keys
+- Only you (and users you whitelist) can use your instance
+
+This is a Spotify platform limitation, not a design choice. Self-hosting ensures you have full control over your data and credentials.
+
+## Features
+
+- 🔗 **URL-based transfer** — Just paste a public YouTube/YouTube Music playlist URL
+- 🎯 **Accurate matching** — Smart artist + title matching algorithm with fuzzy search
+- 📊 **Progress UI** — Real-time progress tracking (Fetching → Matching → Adding)
+- ⚡ **Safe skipping** — Skips incorrect matches to avoid polluting your playlist
+- 🔒 **Privacy-first** — No user data stored, no databases, no tracking
+- 🎨 **Modern UI** — Beautiful Nord-themed interface
+
+## Requirements
+
+- **Node.js 18+** (LTS recommended)
+- **Spotify account** (free or premium)
+- **Google account** (for YouTube Data API)
+
+## Setup Instructions
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/transferit.git
+cd transferit
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure Environment Variables
+
+```bash
+cp .env.example .env.local
+```
+
+Open `.env.local` and fill in your API credentials (see steps below).
+
+### 4. Create YouTube Data API Key
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project (or select an existing one)
+3. Enable the **YouTube Data API v3**
+4. Go to **APIs & Services** → **Credentials**
+5. Click **Create Credentials** → **API Key**
+6. Copy the API key and paste it into `.env.local`:
+   ```
+   YOUTUBE_API_KEY=your_youtube_api_key_here
+   ```
+
+### 5. Create Spotify Developer App
+
+1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+2. Click **Create App**
+3. Fill in the app details:
+   - **App name**: TransferIt (or any name you prefer)
+   - **App description**: Playlist transfer tool
+   - **Redirect URI**: `http://127.0.0.1:3000/api/callback/spotify`
+4. Click **Save**
+5. Go to your app's **Settings**
+6. Copy the **Client ID** and **Client Secret**
+7. Paste them into `.env.local`:
+   ```
+   SPOTIFY_CLIENT_ID=your_spotify_client_id
+   SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
+   SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/api/callback/spotify
+   ```
+
+> **Important:** The redirect URI must match exactly, including the port number and path.
+
+### 6. Run the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 7. Open the App
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Navigate to [http://127.0.0.1:3000](http://127.0.0.1:3000) in your browser.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Usage
 
-## Learn More
+1. Click **Connect Spotify & Transfer** to authenticate with your Spotify account
+2. Paste a public YouTube/YouTube Music playlist URL
+3. Click **Analyze Playlist** to fetch the tracks
+4. Click **Start Transfer** to begin the migration
+5. View your new playlist in Spotify!
 
-To learn more about Next.js, take a look at the following resources:
+## Limitations
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Public playlists only** — Private YouTube playlists cannot be accessed without additional OAuth setup
+- **Self-hosted requirement** — Each user must provide their own API keys due to Spotify restrictions
+- **Matching accuracy** — Some tracks may not be found on Spotify (regional availability, different versions, etc.)
+- **Rate limits** — Both YouTube and Spotify APIs have rate limits; very large playlists may take time
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Disclaimer
 
-## Deploy on Vercel
+This project is **non-commercial** and intended for **educational and personal use only**.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- TransferIt is not affiliated with, endorsed by, or connected to YouTube, YouTube Music, Google, or Spotify.
+- YouTube Music and Spotify are trademarks of their respective owners.
+- Use this tool responsibly and in accordance with both platforms' Terms of Service.
+- The authors are not responsible for any misuse of this software.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+**Made with ❤️ for music lovers who want to keep their playlists everywhere.**

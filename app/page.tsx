@@ -24,7 +24,7 @@ export default function Home() {
             <a className="px-5 py-2 text-sm font-semibold text-nord-subtext hover:text-white hover:bg-nord-surface-highlight rounded-full transition-all" href="#workflow">How it works</a>
             <a className="px-5 py-2 text-sm font-semibold text-nord-subtext hover:text-white hover:bg-nord-surface-highlight rounded-full transition-all" href="#">FAQ</a>
           </nav>
-          
+
         </div>
       </header>
 
@@ -56,6 +56,10 @@ export default function Home() {
                   <Image src={spotify} alt="Spotify" width={28} height={28} />
                   <span className="relative z-10">Connect Spotify &amp; Transfer</span>
                 </button>
+                <p className="text-xs text-nord-muted text-center mt-3 flex items-center justify-center gap-1.5">
+                  <span className="material-symbols-outlined text-sm">info</span>
+                  Self-hosted app — requires your own Spotify developer credentials
+                </p>
               </div>
             </div>
           </div>

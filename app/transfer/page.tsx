@@ -189,13 +189,8 @@ function TransferContent() {
                                             reason: log.skipReason || "NOT FOUND",
                                         }));
 
-                                    console.log("📋 Transfer complete! Logs count:", prev.logs.length);
-                                    console.log("📋 Skipped songs count:", skippedSongs.length);
-                                    console.log("📋 Skipped songs:", skippedSongs);
-
                                     if (skippedSongs.length > 0) {
                                         sessionStorage.setItem("skippedSongs", JSON.stringify(skippedSongs));
-                                        console.log("📋 Stored in sessionStorage");
                                     }
 
                                     return {
