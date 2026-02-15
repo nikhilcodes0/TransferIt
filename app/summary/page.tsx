@@ -94,7 +94,7 @@ function SummaryContent() {
             <Header showLogout />
 
             {/* Main Content */}
-            <main className="flex-grow flex items-center justify-center p-4 sm:p-6 lg:p-8">
+            <main className="grow flex items-center justify-center p-4 sm:p-6 lg:p-8">
                 <div className="w-full max-w-lg">
                     {/* Result Card */}
                     <div className="bg-nord-surface rounded-2xl shadow-xl border border-nord-surface-highlight overflow-hidden">

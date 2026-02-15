@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import spotify from "@/public/spotify.png";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -28,6 +29,23 @@ export default function Home() {
         </div>
       </header>
 
+      {/* Spotify Access Notice */}
+      <div className="w-full max-w-3xl mx-auto mt-4 px-4 relative z-10">
+        <div className="rounded-2xl border border-yellow-500/30 bg-yellow-500/5 backdrop-blur-sm p-4 md:p-5">
+          <div className="flex items-start gap-3">
+            <span className="material-symbols-outlined text-yellow-400 text-[22px] mt-0.5 shrink-0">warning</span>
+            <div className="space-y-1.5">
+              <p className="text-md font-semibold text-yellow-300">Spotify Access Notice</p>
+              <p className="text-md text-nord-subtext leading-relaxed">
+                Due to Spotify&apos;s developer policies, apps in <strong className="text-nord-text">Development Mode</strong> cannot allow open sign-ups.
+                Your Spotify email must be <strong className="text-nord-text">manually whitelisted</strong> before you can use this app.
+                Please contact <Link href="mailto:nikhilcodes159357@gmail.com">me</Link> with your Spotify email to get access.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Main Content */}
       <main className="flex-grow flex flex-col items-center justify-start relative px-4 py-12 md:py-24 gap-16 md:gap-24">
         {/* Hero Section */}
@@ -43,16 +61,17 @@ export default function Home() {
             </p>
           </div>
 
+
           {/* CTA Card */}
           <div className="w-full relative group perspective-1000">
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent-green rounded-[1.7rem] blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+            <div className="absolute -inset-1 bg-linear-to-r from-primary to-accent-green rounded-[1.7rem] blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
             <div className="relative w-full bg-nord-surface/90 border border-nord-surface-highlight rounded-3xl shadow-2xl p-2 backdrop-blur-xl">
               <div className="bg-nord-bg rounded-2xl border border-nord-surface-highlight/30 p-6 md:p-8 flex flex-col gap-6">
                 <button
-                  className="relative w-full overflow-hidden group/btn flex items-center justify-center gap-3 bg-gradient-to-r from-primary to-primary-hover text-nord-bg font-extrabold text-xl py-5 px-6 rounded-xl transition-all duration-300 shadow-glow hover:shadow-lg hover:scale-[1.01] active:scale-[0.99]"
+                  className="relative w-full overflow-hidden group/btn flex items-center justify-center gap-3 bg-linear-to-r from-primary to-primary-hover text-nord-bg font-extrabold text-xl py-5 px-6 rounded-xl transition-all duration-300 shadow-glow hover:shadow-lg hover:scale-[1.01] active:scale-[0.99]"
                   onClick={() => window.location.href = "/api/auth/spotify"}
                 >
-                  <div className="absolute inset-0 w-full h-full bg-white/20 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-500 ease-in-out skew-x-12"></div>
+                  <div className="absolute inset-0 w-full h-full bg-white/20 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-500 ease-in-out skew-x-12"></div>
                   <Image src={spotify} alt="Spotify" width={28} height={28} />
                   <span className="relative z-10">Connect Spotify &amp; Transfer</span>
                 </button>
@@ -72,7 +91,7 @@ export default function Home() {
               <h3 className="text-3xl font-bold text-white tracking-tight mb-2">Workflow</h3>
               <p className="text-nord-muted font-medium">Four simple steps to migrate your audio library.</p>
             </div>
-            <div className="h-px flex-1 bg-gradient-to-r from-nord-surface-highlight to-transparent mx-6 my-4 md:my-0"></div>
+            <div className="h-px flex-1 bg-linear-to-r from-nord-surface-highlight to-transparent mx-6 my-4 md:my-0"></div>
             <span className="hidden md:inline-flex items-center justify-center w-10 h-10 rounded-full border border-nord-surface-highlight text-nord-muted bg-nord-surface">
               <span className="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
             </span>
@@ -80,7 +99,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(180px,auto)]">
             {/* Step 1 - Connect Spotify */}
-            <div className="bento-card col-span-1 md:col-span-2 row-span-1 bg-gradient-to-br from-nord-surface to-nord-surface-highlight/30 border border-nord-surface-highlight rounded-3xl p-8 relative overflow-hidden group">
+            <div className="bento-card col-span-1 md:col-span-2 row-span-1 bg-linear-to-br from-nord-surface to-nord-surface-highlight/30 border border-nord-surface-highlight rounded-3xl p-8 relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-8 opacity-10 font-black text-9xl select-none group-hover:opacity-20 transition-opacity">1</div>
               <div className="relative z-10 flex flex-col justify-between h-full gap-6">
                 <div className="w-14 h-14 rounded-2xl bg-accent-green/10 flex items-center justify-center text-accent-green border border-accent-green/20 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">

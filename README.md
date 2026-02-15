@@ -6,6 +6,9 @@ TransferIt is a developer-friendly, self-hosted tool that migrates your music pl
 
 ![Transfer Flow](https://img.shields.io/badge/YouTube-Spotify-green?style=for-the-badge&logo=spotify)
 
+> [!WARNING]
+> **Spotify Access Restriction:** Due to Spotify's developer policies, apps in **Development Mode** do not allow open sign-ups. Each user's Spotify email address must be **manually added** to the app's whitelist before they can log in. If you want to use this app, please contact the developer with your Spotify email and username so you can be added.
+
 ## Why Self-Hosted?
 
 Due to **Spotify's OAuth restrictions for individual developers**, this project must be self-hosted. Spotify requires apps in "Development Mode" to explicitly whitelist each user's email address before they can authenticate—making it impractical to run as a public service.
